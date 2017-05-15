@@ -62,11 +62,11 @@ void convert_dataset(const std::string& image_filename, const char* db_filename)
   // Open files
   std::ifstream infile(image_filename.c_str());
   CHECK(infile) << "Unable to open file " << image_filename;
-  std::vector<std::pair<std::vector<std::string>, int> > lines;
+  std::vector<std::pair<std::vector<std::string>, float> > lines;
   
   std::vector<std::string> image_pair_vec; 
   std::string filename_first, filename_second;
-  int label;
+  float label;
   while (infile >> filename_first >> filename_second >> label) {
     if (!image_pair_vec.empty()) {
       image_pair_vec.clear();
