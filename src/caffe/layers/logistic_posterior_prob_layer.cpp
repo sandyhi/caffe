@@ -50,6 +50,6 @@ STUB_GPU(LogisticPosteriorProbLayer);
 #endif
 
 INSTANTIATE_CLASS(LogisticPosteriorProbLayer);
-
+REGISTER_LAYER_CLASS(LogisticPosteriorProb);
 
 }  // namespace caffe
