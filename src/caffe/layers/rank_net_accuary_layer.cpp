@@ -33,12 +33,12 @@ void RankNetAccuracyLayer<Dtype>::Forward_cpu(const vector<Blob<Dtype>*>& bottom
   Dtype accuracy = 0;
   const Dtype* bottom_data = bottom[0]->cpu_data();
   const Dtype* bottom_label = bottom[1]->cpu_data();
-  const int dim = bottom[0]->count() / outer_num_;
+  //const int dim = bottom[0]->count() / outer_num_;
   int count = 0;
-  int batch_num = bottom[0].count();
+  int batch_num = bottom[0]->count();
   for (int i = 0; i < batch_num; ++i) {
-    float pred_prob = static_cast<float>(bottom_data[i])
-    float ture_label = static_cast<float>(bottom_label[i])
+    float pred_prob = static_cast<float>(bottom_data[i]);
+    float ture_label = static_cast<float>(bottom_label[i]);
     DCHECK_GE(pred_prob, 0);
     if (((pred_prob - 0.5) * (ture_label - 0.5)) > 0 || 
         ((pred_prob - 0.5) + (ture_label - 0.5)) == 0) {

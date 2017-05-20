@@ -25,7 +25,7 @@
 
 #ifdef USE_LEVELDB
 #include "leveldb/db.h"
-
+using boost::scoped_ptr;
 
 DEFINE_bool(shuffle, false,
     "Randomly shuffle the order of images and their labels");
@@ -110,6 +110,8 @@ void convert_dataset(const std::string& image_filename, const char* db_filename)
   int num_items = lines.size();
   LOG(INFO) << "A total of " << num_items << " items.";
   LOG(INFO) << "Rows: " << rows << " Cols: " << cols;
+
+  int count = 0;
   for (int line_id = 0; line_id < num_items; ++line_id) {
     std::string image_file_first = lines[line_id].first[0];
     std::string image_file_second = lines[line_id].first[1];
@@ -121,27 +123,40 @@ void convert_dataset(const std::string& image_filename, const char* db_filename)
     datum.SerializeToString(&value);
     std::string key_str = caffe::format_int(line_id, 8);
     db->Put(leveldb::WriteOptions(), key_str, value);
+  
+    if (++count % 1000 == 0) {
+      // Commit db
+      LOG(INFO) << "Processed " << count << " files.";
+    }
   }
-
+  LOG(INFO) << "Total Processed " << count << " files.";
+  
   delete db;
   delete [] pixels;
 }
 
 int main(int argc, char** argv) {
-  #ifndef GFLAGS_GFLAGS_H_
-    namespace gflags = google;
-  #endif
-  if (argc != 3) {
+  ::google::InitGoogleLogging(argv[0]);
+  // Print output to stderr (while still logging)
+  FLAGS_alsologtostderr = 1;
+
+#ifndef GFLAGS_GFLAGS_H_
+  namespace gflags = google;
+#endif
+  gflags::ParseCommandLineFlags(&argc, &argv, true); 
+  if (argc < 3) {
     printf("Convert a set of images to the leveldb/lmdb\n"
         "format used as input for Caffe.\n"
         "Usage:\n"
         "    convert_image_pair_data [FLAGS] input_image_file output_db_file\n");
-    gflags::ParseCommandLineFlags(&argc, &argv, true);
-  } else {
     gflags::ShowUsageWithFlagsRestrict(argv[0], "tools/convert_image_pair_data");
-    google::InitGoogleLogging(argv[0]);
-    convert_dataset(argv[1], argv[2]);
+    return 1;
   }
+  
+  std::string image_filename = argv[1];
+  std::string db_name = argv[2]; 
+  convert_dataset(image_filename, db_name.c_str());
+  
   return 0;
 }
 #else

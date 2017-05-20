@@ -11,6 +11,12 @@ inline Dtype sigmoid(Dtype x) {
 }
 
 template <typename Dtype>
+void LogisticPosteriorProbLayer<Dtype>::Reshape(const vector<Blob<Dtype>*>& bottom,
+      const vector<Blob<Dtype>*>& top) {
+  top[0]->ReshapeLike(*bottom[0]);
+}
+
+template <typename Dtype>
 void LogisticPosteriorProbLayer<Dtype>::Forward_cpu(const vector<Blob<Dtype>*>& bottom,
     const vector<Blob<Dtype>*>& top) {
   if (bottom.size() != 2) { return; }
@@ -21,7 +27,7 @@ void LogisticPosteriorProbLayer<Dtype>::Forward_cpu(const vector<Blob<Dtype>*>& 
   const int count_second = bottom[1]->count();
   if (count_first != count_second) { return; }
   for (int i = 0; i < count_first; ++i) {
-    Dtype temp_val = bottom_data_first[i] - bottom_data_second[i] 
+    Dtype temp_val = bottom_data_first[i] - bottom_data_second[i]; 
     top_data[i] = sigmoid(temp_val);
   }
 }

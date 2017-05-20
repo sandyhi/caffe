@@ -82,9 +82,9 @@ void RankNetCrossEntropyLossLayer<Dtype>::Forward_cpu(
   float upper = 1.0 - lower;
   for (int i = 0; i < bottom[0]->count(); ++i) {
     const float target_value = static_cast<float>(target[i]);
-    float posterior_prob = static_cast<float>(input_data[i])
-    float clip_pred_prob = std::clamp(posterior_prob, lower, upper)
-    loss -= target_value * log(clip_pred_prob) + (1 - target_value) * log(1 - clip_pred_prob);    
+    float posterior_prob = static_cast<float>(input_data[i]);
+    float clip_pred_prob = std::max(lower, std::min(posterior_prob, upper));    
+    loss -= target_value * log(clip_pred_prob) + (1.0 - target_value) * log(1.0 - clip_pred_prob);    
     ++valid_count;
   }
   normalizer_ = get_normalizer(normalization_, valid_count);

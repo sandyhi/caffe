@@ -7,8 +7,6 @@
 #include "caffe/layer.hpp"
 #include "caffe/proto/caffe.pb.h"
 
-#include "caffe/layers/neuron_layer.hpp"
-
 namespace caffe {
 
 /**
@@ -20,12 +18,13 @@ namespace caffe {
  * The ReLULayer is often a better choice for this reason.
  */
 template <typename Dtype>
-class LogisticPosteriorProbLayer : public NeuronLayer<Dtype> {
+class LogisticPosteriorProbLayer : public Layer<Dtype> {
  public:
-  explicit LogisticPosteriorProbLayer(const LayerParameter& param)
-      : NeuronLayer<Dtype>(param) {}
-
-  virtual inline const char* type() const { return "Sigmoid"; }
+  explicit LogisticPosteriorProbLayer(const LayerParameter& param) 
+     : Layer<Dtype>(param) {}
+  virtual void Reshape(const vector<Blob<Dtype>*>& bottom,
+     const vector<Blob<Dtype>*>& top);
+  virtual inline const char* type() const { return "LogisticPosteriorProb"; }
 
  protected:
   /**
