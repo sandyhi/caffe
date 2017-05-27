@@ -115,6 +115,12 @@ void convert_dataset(const std::string& image_filename, const char* db_filename)
   for (int line_id = 0; line_id < num_items; ++line_id) {
     std::string image_file_first = lines[line_id].first[0];
     std::string image_file_second = lines[line_id].first[1];
+    cv::Mat img_data_first = cv::imread(image_file_first);
+    cv::Mat img_data_second = cv::imread(image_file_second);
+    if (!img_data_first.data || !img_data_second.data) {
+        LOG(INFO) << "Illegal image";
+        continue;
+    }
     label = lines[line_id].second;
     read_image(image_file_first, image_file_second, 
         pixels);
@@ -153,6 +159,7 @@ int main(int argc, char** argv) {
     return 1;
   }
   
+  //bool shuffle = FLAGS_shuffle;
   std::string image_filename = argv[1];
   std::string db_name = argv[2]; 
   convert_dataset(image_filename, db_name.c_str());

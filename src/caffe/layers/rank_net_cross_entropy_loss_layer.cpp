@@ -87,8 +87,9 @@ void RankNetCrossEntropyLossLayer<Dtype>::Forward_cpu(
     loss -= target_value * log(clip_pred_prob) + (1.0 - target_value) * log(1.0 - clip_pred_prob);    
     ++valid_count;
   }
-  normalizer_ = get_normalizer(normalization_, valid_count);
-  top[0]->mutable_cpu_data()[0] = loss / normalizer_;
+  //normalizer_ = get_normalizer(normalization_, valid_count);
+  float num = static_cast<float>(std::max(1, valid_count)); 
+  top[0]->mutable_cpu_data()[0] = loss / num;
 }
 
 template <typename Dtype>
